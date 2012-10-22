@@ -238,7 +238,7 @@ describe "A Pod::Specification, in general," do
   end
 end
 
-describe "A Pod::specification, xcproject handling" do
+describe "A Pod::specification, xcodeproj handling" do
 
   before do
     @spec = Pod::Spec.new
@@ -249,18 +249,18 @@ describe "A Pod::specification, xcproject handling" do
       }
   end
 
-  it "takes an xcproject attribute" do
+  it "takes an xcodeproj attribute" do
     @spec.platform = :ios
-    @spec.xcproject = @project
+    @spec.xcodeproj = @project
 
     @spec.activate_platform(:ios)
-    @spec.xcproject.should == @project
+    @spec.xcodeproj.should == @project
   end
 
-  it "takes an xcproject attribue through the plattform proxy" do
-    @spec.ios.xcproject = @project
+  it "takes an xcodeproj attribue through the plattform proxy" do
+    @spec.ios.xcodeproj = @project
     @spec.activate_platform(:ios)
-    @spec.xcproject.should == @project
+    @spec.xcodeproj.should == @project
   end
 
 end
