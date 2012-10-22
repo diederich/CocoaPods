@@ -149,6 +149,7 @@ module Pod
           weak_frameworks=
           library=
           libraries=
+          xcproject=
           compiler_flags=
           deployment_target=
           header_dir=

@@ -259,6 +259,21 @@ describe "A Pod::specification, xcproject handling" do
       resource_target: "Resource_Target"
       }
   end
+
+  it "takes an xcproject attribue through the plattform proxy" do
+    @spec.ios.xcproject = {
+      project: "project.xcproject",
+      library_target: "Target",
+      resource_target: "Resource_Target"
+      }
+    @spec.activate_platform(:ios)
+    @spec.xcproject.should ==   {
+        project: "project.xcproject",
+        library_target: "Target",
+        resource_target: "Resource_Target"
+      }
+  end
+
 end
 
 describe "A Pod::Specification, hierarchy" do
