@@ -238,6 +238,29 @@ describe "A Pod::Specification, in general," do
   end
 end
 
+describe "A Pod::specification, xcproject handling" do
+
+  before do
+    @spec = Pod::Spec.new
+  end
+
+  it "takes an xcproject attribute" do
+    @spec.platform = :ios
+    @spec.xcproject = {
+      project: "project.xcproject",
+      library_target: "Target",
+      resource_target: "Resource_Target"
+      }
+
+    @spec.activate_platform(:ios)
+    @spec.xcproject.should ==   {
+      project: "project.xcproject",
+      library_target: "Target",
+      resource_target: "Resource_Target"
+      }
+  end
+end
+
 describe "A Pod::Specification, hierarchy" do
   before do
     @spec = Pod::Spec.new do |s|

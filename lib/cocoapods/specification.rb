@@ -48,7 +48,8 @@ module Pod
           weak_frameworks
           libraries
           dependencies
-          compiler_flags ].each do |attr|
+          compiler_flags
+          xcproject ].each do |attr|
         instance_variable_set( "@#{attr}", { :ios => [], :osx => [] } )
       end
       @xcconfig     = { :ios => Xcodeproj::Config.new, :osx => Xcodeproj::Config.new }
@@ -266,6 +267,7 @@ module Pod
     pltf_chained_attr_accessor  :frameworks,                  lambda {|value, current| (current << value).flatten }
     pltf_chained_attr_accessor  :weak_frameworks,             lambda {|value, current| (current << value).flatten }
     pltf_chained_attr_accessor  :libraries,                   lambda {|value, current| (current << value).flatten }
+    pltf_chained_attr_accessor  :xcproject
 
     alias_method :resource=,        :resources=
     alias_method :preserve_path=,   :preserve_paths=
