@@ -242,36 +242,25 @@ describe "A Pod::specification, xcproject handling" do
 
   before do
     @spec = Pod::Spec.new
+    @project = {
+      project: "project.xcproject",
+      library_target: "Target",
+      resource_target: "Resource_Target"
+      }
   end
 
   it "takes an xcproject attribute" do
     @spec.platform = :ios
-    @spec.xcproject = {
-      project: "project.xcproject",
-      library_target: "Target",
-      resource_target: "Resource_Target"
-      }
+    @spec.xcproject = @project
 
     @spec.activate_platform(:ios)
-    @spec.xcproject.should ==   {
-      project: "project.xcproject",
-      library_target: "Target",
-      resource_target: "Resource_Target"
-      }
+    @spec.xcproject.should == @project
   end
 
   it "takes an xcproject attribue through the plattform proxy" do
-    @spec.ios.xcproject = {
-      project: "project.xcproject",
-      library_target: "Target",
-      resource_target: "Resource_Target"
-      }
+    @spec.ios.xcproject = @project
     @spec.activate_platform(:ios)
-    @spec.xcproject.should ==   {
-        project: "project.xcproject",
-        library_target: "Target",
-        resource_target: "Resource_Target"
-      }
+    @spec.xcproject.should == @project
   end
 
 end
