@@ -32,10 +32,18 @@ module Pod
           pod.specifications.each do |spec|
             if spec.xcodeproj.present?
               lib_project = ( pod.root + spec.xcodeproj[:project]).relative_path_from(workspace_path.dirname).to_s
-              UI.message "project: "+lib_project.to_s
+              UI.message "adding project: "+lib_project.to_s
               workspace << lib_project unless workspace.include?(lib_project)
             end
           end
+        end
+        workspace.save_as(workspace_path)
+      end
+
+      def remove_projects_from_workspace(pod_names,sandbox)
+        pod_names.each do |pod_name|
+          pod_path = File.join("Pods",pod_name).to_s
+            workspace.projpaths.delete_if { |projpath| projpath.include? pod_path }
         end
         workspace.save_as(workspace_path)
       end
@@ -57,8 +65,19 @@ module Pod
         user_project = project.project
 
         targets = link_targets_in_definition(target_definition, user_project)
-        frameworks = user_project.frameworks_group
+        pod_dependencies_group = user_project.frameworks_group["Pod dependencies"]
+        pod_dependencies_group ||= user_project.frameworks_group.new_group("Pod dependencies")
 
+        pod_dependencies_group.children.each do |pod_dependency|
+          pod_dependency.referrers.each do |referrer|
+            if referrer.class == Xcodeproj::Project::Object::PBXBuildFile
+              referrer.remove_from_project
+              pod_dependency.remove_referrer referrer
+            end
+          end
+          pod_dependency.remove_from_project
+        end
+        
         specs.each do |spec|
 
           pod = @pods_by_target[target_definition].find { |pod| pod.specifications.include? spec }
@@ -81,9 +100,9 @@ module Pod
 
             if targets.present?
 
-              library = frameworks.children.find {|file| file.name == lib_name}
+              library = pod_dependencies_group.children.find {|file| file.name == lib_name}
               library ||= begin
-                library_ref = frameworks.new_file(lib_name)
+                library_ref = pod_dependencies_group.new_file(lib_name)
                 library_ref.include_in_index = '0'
                 library_ref.source_tree = 'BUILT_PRODUCTS_DIR'
                 library_ref.explicit_file_type = library_ref.last_known_file_type
@@ -97,9 +116,9 @@ module Pod
               end
               if resource_name.present?
 
-                resource_bundle = frameworks.children.find {|file| file.name == resource_name}
+                resource_bundle = pod_dependencies_group.children.find {|file| file.name == resource_name}
                 resource_bundle ||= begin
-                  resource_bundle_ref = frameworks.new_file(resource_name)
+                  resource_bundle_ref = pod_dependencies_group.new_file(resource_name)
                   resource_bundle_ref.include_in_index = '0'
                   resource_bundle_ref.source_tree = 'BUILT_PRODUCTS_DIR'
                   resource_bundle_ref.explicit_file_type = resource_bundle_ref.last_known_file_type

@@ -102,6 +102,9 @@ module Pod
           path.rmtree if path.exist?
         end
       end
+
+      installer = LinkedDependenciesInstaller.new(@podfile, pods_by_target)
+      installer.remove_projects_from_workspace(resolver.removed_pods,@sandbox)
     end
 
     def install!
