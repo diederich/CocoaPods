@@ -268,13 +268,28 @@ module Pod
     pltf_chained_attr_accessor  :frameworks,                  lambda {|value, current| (current << value).flatten }
     pltf_chained_attr_accessor  :weak_frameworks,             lambda {|value, current| (current << value).flatten }
     pltf_chained_attr_accessor  :libraries,                   lambda {|value, current| (current << value).flatten }
-    pltf_chained_attr_accessor  :xcodeproj
 
     alias_method :resource=,        :resources=
     alias_method :preserve_path=,   :preserve_paths=
     alias_method :framework=,       :frameworks=
     alias_method :weak_framework=,  :weak_frameworks=
     alias_method :library=,         :libraries=
+
+    # @!method xcodeproj=
+    #
+    # @abstract The Xcode Project to build for this pod. The passed Hash must
+    # specify the relative path of an .xcodeproj Project for the key project and
+    # a build target in this project for the library_target key. It may optionally
+    # specify a target, which builds a .bundle containing required resources.
+    #
+    # The project will be added to the workspace, the library will be added to the link
+    # frameworks phase of all relevant targets and the resource.bundle will by added to
+    # a copy files phase of all relevant targets.
+    #
+    # @param [Hash] A Hash describing the Project to build for this spec.
+    #
+    platform_attr_writer           :xcodeproj
+    pltf_first_defined_attr_reader :xcodeproj
 
     # @!method requires_arc=
     #

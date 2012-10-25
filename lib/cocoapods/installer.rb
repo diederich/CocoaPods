@@ -4,6 +4,7 @@ module Pod
   class Installer
     autoload :TargetInstaller,       'cocoapods/installer/target_installer'
     autoload :UserProjectIntegrator, 'cocoapods/installer/user_project_integrator'
+    autoload :LinkedDependenciesInstaller, 'cocoapods/installer/linked_dependencies_installer'
 
     include Config::Mixin
 
@@ -56,6 +57,14 @@ module Pod
           UI.section("Using #{pod}", "-> ".green)
         end
       end
+    end
+
+    def install_linked_dependencies
+      installer = LinkedDependenciesInstaller.new(@podfile, pods_by_target)
+
+      installer.add_projects_to_workspace(pods,@sandbox)
+
+      installer.add_libraries_to_targets
     end
 
     def download_pod(pod)
@@ -120,6 +129,10 @@ module Pod
 
         UI.message"- Installing targets" do
           generate_target_support_files
+        end
+
+        UI.message"- Installing linked dependencies" do
+          install_linked_dependencies
         end
 
         UI.message "- Running post install hooks" do

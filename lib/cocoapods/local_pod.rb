@@ -154,7 +154,9 @@ module Pod
     # @return [void]
     #
     def clean!
-      clean_paths.each { |path| FileUtils.rm_rf(path) }
+      if specifications.none? { |spec| spec.xcodeproj.present? }
+        clean_paths.each { |path| FileUtils.rm_rf(path) }
+      end
       @cleaned = true
     end
 
